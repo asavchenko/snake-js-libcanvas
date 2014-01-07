@@ -25,7 +25,7 @@
              * @return {*}
              */
             isIntersect = function(vboard) {
-              var head = snake.head(), nHead = snake.getNextHead();
+              var head = snake.head();
               if (typeof vboard[head.y] === 'undefined') {
                 return true;
               }
@@ -54,6 +54,7 @@
               speed = GAME_SPEED;
               level = 0;
               score = 0;
+              scoreLevel = 0;
               window.clearInterval(gameInterval);
               gameInterval = 0;
               snake.stop();
@@ -74,7 +75,7 @@
                 if (isGameOver()) {
                   gameOver();
                 } else {
-                  if (scoreLevel > 1900) {
+                  if (scoreLevel > 1500) {
                     nextLevel();
                   }
                   snake.show();
@@ -83,7 +84,6 @@
                     score += 100;
                     scoreLevel += 100;
                     createFood();
-                    snake.show();
                   }
                   board.show();
                   info.update([
@@ -150,9 +150,9 @@
               gameInterval = 0;
               snake.stop();
               board.reset(snake.reset.bind(snake, function() {
+                speed = s;
                 start();
                 createFood();
-                speed = s;
               }, {length: l}));
             };
 

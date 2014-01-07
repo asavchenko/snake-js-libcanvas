@@ -61,7 +61,7 @@
         for (j = 0; j < this.width; j += 1) {
           this.data[i][j] = new LC.RoundedRectangle(
               j * this.cellSize + j,
-              i * this.cellSize + i,
+              + i * this.cellSize + i,
               this.cellSize,
               this.cellSize)
               .snapToPixel();

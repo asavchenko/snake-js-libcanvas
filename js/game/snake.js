@@ -117,23 +117,26 @@
      *
      */
     eat = function() {
-      this.body.unshift(this.getNextHead());
+      this.body.push(this.tail());
     };
 
 
     /**
-     * @param {object} cell
+     *
      */
-    isCanReverse = function(cell) {
+    isCanReverse = function(direction) {
+      var h, n;
+      h = this.head();
+      n = this.body[1];
       switch (this.direction) {
         case 0:
-          return this.body[1].x === cell.x + 1 && this.body[1].y === cell.y;
+          return direction === 180 && n.x === h.x - 1 && n.y === h.y;
         case 90:
-          return this.body[1].x === cell.x && this.body[1].y === cell.y - 1;
+          return direction === 270 && n.x === h.x && n.y === h.y + 1;
         case 180:
-          return this.body[1].x === cell.x - 1 && this.body[1].y === cell.y;
+          return direction === 0 && n.x === h.x + 1 && n.y === h.y;
         case 270:
-          return this.body[1].x === cell.x && this.body[1].y === cell.y + 1;
+          return direction === 90 && n.x === h.x && n.y === h.y - 1;
       }
     };
 
@@ -153,10 +156,10 @@
       if (this.direction === 180) {
         return;
       }
-      this.direction = 180;
-      if (this.isCanReverse(this.head())) {
+      if (this.isCanReverse(180)) {
         this.reverse();
       }
+      this.direction = 180;
     };
 
 
@@ -167,10 +170,10 @@
       if (this.direction === 0) {
         return;
       }
-      this.direction = 0;
-      if (this.isCanReverse(this.head())) {
+      if (this.isCanReverse(0)) {
         this.reverse();
       }
+      this.direction = 0;
     };
 
 
@@ -181,10 +184,10 @@
       if (this.direction === 270) {
         return;
       }
-      this.direction = 270;
-      if (this.isCanReverse(this.head())) {
+      if (this.isCanReverse(270)) {
         this.reverse();
       }
+      this.direction = 270;
     };
 
 
@@ -195,10 +198,10 @@
       if (this.direction === 90) {
         return;
       }
-      this.direction = 90;
-      if (this.isCanReverse(this.head())) {
+      if (this.isCanReverse(90)) {
         this.reverse();
       }
+      this.direction = 90;
     };
 
 
