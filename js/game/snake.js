@@ -12,37 +12,24 @@
    ****************************************************************************/
   define(['game/board'], function(board) {
     var init, reset, turnLeft, turnRight, turnDown, turnUp,
-        show, hide, enableMoving, head, tail, length, stop, eat, reverse, move,
+        show, hide, head, tail, length, stop, eat, reverse, move,
         isCanReverse, getNextHead, isEatenTail;
     /**
      *
      */
-    init = function(callback) {
+    init = function(callback, options) {
       var START_POINT = {
         x: parseInt(board.width / 2),
         y: parseInt(board.height / 2)
-      };
-      this.body = [
-        {x: START_POINT.x, y: START_POINT.y},
-        {x: START_POINT.x, y: START_POINT.y + 1},
-        {x: START_POINT.x, y: START_POINT.y + 2}
-      ];
+      }, i, l;
+      options = options || {};
+      l = options.length || 3;
+      this.body = [];
+      for (i = 0; i < l; i += 1) {
+        this.body.push({x: START_POINT.x, y: START_POINT.y + i});
+      }
       this.show();
       this.direction = 90;
-      this.enableMoving(callback);
-    };
-
-
-    /**
-     *
-     */
-    enableMoving = function(callback) {
-      this.moveInterval = window.setInterval(function() {
-        this.hide();
-        this.move();
-        this.show();
-      }.bind(this), 350);
-
       if (typeof callback === 'function') {
         callback();
       }
@@ -54,6 +41,7 @@
      */
     move = function() {
       var i = this.body.length, head = this.getNextHead();
+      this.prevTail = this.tail();
       while (i--) {
         this.body[i] = this.body[i - 1];
       }
@@ -83,8 +71,8 @@
     /**
      *
      */
-    reset = function(callback) {
-      this.init(callback);
+    reset = function(callback, options) {
+      this.init(callback, options);
     };
 
 
@@ -129,9 +117,7 @@
      *
      */
     eat = function() {
-      var tail = this.tail();
-      this.move();
-      this.body.push(tail);
+      this.body.unshift(this.getNextHead());
     };
 
 
@@ -141,11 +127,11 @@
     isCanReverse = function(cell) {
       switch (this.direction) {
         case 0:
-          return this.body[1].x === cell.x - 1 && this.body[1].y === cell.y;
+          return this.body[1].x === cell.x + 1 && this.body[1].y === cell.y;
         case 90:
           return this.body[1].x === cell.x && this.body[1].y === cell.y - 1;
         case 180:
-          return this.body[1].x === cell.x + 1 && this.body[1].y === cell.y;
+          return this.body[1].x === cell.x - 1 && this.body[1].y === cell.y;
         case 270:
           return this.body[1].x === cell.x && this.body[1].y === cell.y + 1;
       }
@@ -164,6 +150,9 @@
      *
      */
     turnLeft = function() {
+      if (this.direction === 180) {
+        return;
+      }
       this.direction = 180;
       if (this.isCanReverse(this.head())) {
         this.reverse();
@@ -175,6 +164,9 @@
      *
      */
     turnRight = function() {
+      if (this.direction === 0) {
+        return;
+      }
       this.direction = 0;
       if (this.isCanReverse(this.head())) {
         this.reverse();
@@ -186,6 +178,9 @@
      *
      */
     turnDown = function() {
+      if (this.direction === 270) {
+        return;
+      }
       this.direction = 270;
       if (this.isCanReverse(this.head())) {
         this.reverse();
@@ -197,6 +192,9 @@
      *
      */
     turnUp = function() {
+      if (this.direction === 90) {
+        return;
+      }
       this.direction = 90;
       if (this.isCanReverse(this.head())) {
         this.reverse();
@@ -275,11 +273,14 @@
       turnUp: turnUp,
       turnDown: turnDown,
       show: show,
-      enableMoving: enableMoving,
       hide: hide,
       head: head,
       tail: tail,
+      getPrevTail: function() {
+        return this.prevTail;
+      },
       eat: eat,
+      length: length,
       reverse: reverse,
       move: move,
       isCanReverse: isCanReverse,
